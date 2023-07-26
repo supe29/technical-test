@@ -1,7 +1,7 @@
 import unittest
 import json
 from time import time
-from application import app
+from app import app
 from data_test import QUERIES, URLS
 
 
