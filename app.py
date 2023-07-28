@@ -11,25 +11,25 @@ from dateutil.parser import parse as parse_date
 # Setting up Flask app
 app = Flask(__name__)
 
-
+# Utility functions
 logs = []
 
 
 def add_to_log(date: datetime, url: str):
-  
-    logs.append({"date": date.date(), "url": url})
+    # TODO: add your code below...
+    logs.append({"date": date, "url": url})
 
     pass
 
 
 def count_break_links(links: list[str]) -> int:
-    
+    # TODO: add your code below...
     count = 0
     for link in links:
         start = time()
         res = requests.get(link)
         end = time() - start
-        print(link)
+        print(link, end)
         if res.status_code >= 400 or end > 60:
             count = count + 1
 
@@ -58,25 +58,15 @@ def count(date_prefix=None):
 
     matching_logs = []
 
-    if len(date_prefix) == 4:
-        matching_logs = [
-            log for log in logs if log["date"].strftime("%Y") == date_prefix]
-    elif len(date_prefix) == 7:
-        matching_logs = [log for log in logs if log["date"].strftime(
-            "%Y-%m") == date_prefix]
-    elif len(date_prefix) == 10:
-        matching_logs = [log for log in logs if log["date"].strftime(
-            "%Y-%m-%d") == date_prefix]
-    elif len(date_prefix) == 16:
-        matching_logs = [log for log in logs if log["date"].strftime(
-            "%Y-%m-%d, %H:%M") == date_prefix]
-    else:
-        return Response('Invalid date format. Supported formats: "YYYY", "YYYY-MM", "YYYY-MM-DD", "YYYY-MM-DD HH:MM"', status=400)
+   
+    for log in logs:
+        if date_prefix in log["date"].strftime("%Y-%m-%d %H:%M:%S"):
+            matching_logs.append(log)
 
     return jsonify({"count": len(matching_logs)})
 
 
-@app.route('/1/queries/popular/<date_prefix>', methods=['GET'])
+@ app.route('/1/queries/popular/<date_prefix>', methods=['GET'])
 def popular(date_prefix=None):
     if date_prefix is None:
         return Response('Missing date prefix in request', status=400)
@@ -98,7 +88,7 @@ def popular(date_prefix=None):
     return jsonify(json)
 
 
-@app.route('/break_links', methods=['POST'])
+@ app.route('/break_links', methods=['POST'])
 def get_break_links():
     links = HelperService.getListLinks(request.get_json(force=True))
 
